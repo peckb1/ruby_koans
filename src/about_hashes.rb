@@ -3,114 +3,129 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 class AboutHashes < Neo::Koan
   def test_creating_hashes
     empty_hash = Hash.new
-    assert_equal __, empty_hash.class
-    assert_equal(__, empty_hash)
-    assert_equal __, empty_hash.size
+    assert_equal Hash, empty_hash.class
+    assert_equal({}, empty_hash)
+    assert_equal 0, empty_hash.size
   end
 
   def test_hash_literals
-    hash = { :one => "uno", :two => "dos" }
-    assert_equal __, hash.size
+    hash = { one: 'uno', two: 'dos' }
+    assert_equal 2, hash.size
   end
 
   def test_accessing_hashes
-    hash = { :one => "uno", :two => "dos" }
-    assert_equal __, hash[:one]
-    assert_equal __, hash[:two]
-    assert_equal __, hash[:doesnt_exist]
+    hash = { one: 'uno', two: 'dos' }
+    assert_equal 'uno', hash[:one]
+    assert_equal 'dos', hash[:two]
+    assert_equal nil, hash[:doesnt_exist]
   end
 
   def test_accessing_hashes_with_fetch
-    hash = { :one => "uno" }
-    assert_equal __, hash.fetch(:one)
-    assert_raise(___) do
+    hash = { one: 'uno' }
+    assert_equal 'uno', hash.fetch(:one)
+    assert_raise(KeyError) do
       hash.fetch(:doesnt_exist)
     end
 
     # THINK ABOUT IT:
     #
     # Why might you want to use #fetch instead of #[] when accessing hash keys?
+    #
+    # if you want the exception to be raised, rather than returning nil
   end
 
   def test_changing_hashes
-    hash = { :one => "uno", :two => "dos" }
-    hash[:one] = "eins"
+    hash = { one: 'uno', two: 'dos' }
+    hash[:one] = 'eins'
 
-    expected = { :one => __, :two => "dos" }
-    assert_equal __, hash
+    expected = { one: 'eins', two: 'dos' }
+    assert_equal expected, hash
 
     # Bonus Question: Why was "expected" broken out into a variable
     # rather than used as a literal?
+    #
+    # (a) readability
+    # (b) the `assert_equal x, y` does not compile, we would need to have used
+    #     the `assert_equal( x, y )` method if creating the hash inline
   end
 
   def test_hash_is_unordered
-    hash1 = { :one => "uno", :two => "dos" }
-    hash2 = { :two => "dos", :one => "uno" }
+    hash1 = { one: 'uno', two: 'dos' }
+    hash2 = { two: 'dos', one: 'uno' }
 
-    assert_equal __, hash1 == hash2
+    assert_equal true, hash1 == hash2
   end
 
   def test_hash_keys
-    hash = { :one => "uno", :two => "dos" }
-    assert_equal __, hash.keys.size
-    assert_equal __, hash.keys.include?(:one)
-    assert_equal __, hash.keys.include?(:two)
-    assert_equal __, hash.keys.class
+    hash = { one: 'uno', two: 'dos' }
+    assert_equal 2, hash.keys.size
+    assert_equal true, hash.keys.include?(:one)
+    assert_equal true, hash.keys.include?(:two)
+    assert_equal Array, hash.keys.class
   end
 
   def test_hash_values
-    hash = { :one => "uno", :two => "dos" }
-    assert_equal __, hash.values.size
-    assert_equal __, hash.values.include?("uno")
-    assert_equal __, hash.values.include?("dos")
-    assert_equal __, hash.values.class
+    hash = { one: 'uno', two: 'dos' }
+    assert_equal 2, hash.values.size
+    assert_equal true, hash.values.include?('uno')
+    assert_equal true, hash.values.include?('dos')
+    assert_equal Array, hash.values.class
   end
 
   def test_combining_hashes
-    hash = { "jim" => 53, "amy" => 20, "dan" => 23 }
-    new_hash = hash.merge({ "jim" => 54, "jenny" => 26 })
+    hash = { 'jim' => 53, 'amy' => 20, 'dan' => 23 }
+    new_hash = hash.merge('jim' => 54, 'jenny' => 26)
 
-    assert_equal __, hash != new_hash
+    assert_equal true, hash != new_hash
 
-    expected = { "jim" => __, "amy" => 20, "dan" => 23, "jenny" => __ }
-    assert_equal __, expected == new_hash
+    expected = { "jim" => 54, "amy" => 20, "dan" => 23, "jenny" => 26 }
+    assert_equal true, expected == new_hash
   end
 
   def test_default_value
     hash1 = Hash.new
     hash1[:one] = 1
 
-    assert_equal __, hash1[:one]
-    assert_equal __, hash1[:two]
+    assert_equal 1, hash1[:one]
+    assert_equal nil, hash1[:two]
 
-    hash2 = Hash.new("dos")
+    hash2 = Hash.new('dos')
     hash2[:one] = 1
 
-    assert_equal __, hash2[:one]
-    assert_equal __, hash2[:two]
+    assert_equal 1, hash2[:one]
+    assert_equal 'dos', hash2[:two]
+
+    hash3 = Hash.new('tres')
+    hash3[:one] = 1
+
+    assert_equal 1, hash3[:one]
+    assert_equal 'tres', hash3[:two]
+    assert_equal 'tres', hash3[:three]
   end
 
   def test_default_value_is_the_same_object
     hash = Hash.new([])
 
-    hash[:one] << "uno"
-    hash[:two] << "dos"
+    hash[:one] << 'uno'
+    hash[:two] << 'dos'
 
-    assert_equal __, hash[:one]
-    assert_equal __, hash[:two]
-    assert_equal __, hash[:three]
+    expected_new_default = %w[uno dos]
 
-    assert_equal __, hash[:one].object_id == hash[:two].object_id
+    assert_equal expected_new_default, hash[:one]
+    assert_equal expected_new_default, hash[:two]
+    assert_equal expected_new_default, hash[:three]
+
+    assert_equal true, hash[:one].object_id == hash[:two].object_id
   end
 
   def test_default_value_with_block
-    hash = Hash.new {|hash, key| hash[key] = [] }
+    hash_with_block = Hash.new { |hash, key| hash[key] = [] }
 
-    hash[:one] << "uno"
-    hash[:two] << "dos"
+    hash_with_block[:one] << 'uno'
+    hash_with_block[:two] << 'dos'
 
-    assert_equal __, hash[:one]
-    assert_equal __, hash[:two]
-    assert_equal __, hash[:three]
+    assert_equal ['uno'], hash_with_block[:one]
+    assert_equal ['dos'], hash_with_block[:two]
+    assert_equal [], hash_with_block[:three]
   end
 end
