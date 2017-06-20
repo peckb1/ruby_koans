@@ -2,6 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 
 class AboutSandwichCode < Neo::Koan
 
+  EXAMPLE_FILE = '../resources/example_file.txt'.freeze
+
   def count_lines(file_name)
     file = open(file_name)
     count = 0
@@ -14,7 +16,7 @@ class AboutSandwichCode < Neo::Koan
   end
 
   def test_counting_lines
-    assert_equal __, count_lines("example_file.txt")
+    assert_equal 4, count_lines(EXAMPLE_FILE)
   end
 
   # ------------------------------------------------------------------
@@ -22,14 +24,14 @@ class AboutSandwichCode < Neo::Koan
   def find_line(file_name)
     file = open(file_name)
     while line = file.gets
-      return line if line.match(/e/)
+      return line if line =~ /e/
     end
   ensure
     file.close if file
   end
 
   def test_finding_lines
-    assert_equal __, find_line("example_file.txt")
+    assert_equal "test\n", find_line(EXAMPLE_FILE)
   end
 
   # ------------------------------------------------------------------
@@ -74,17 +76,22 @@ class AboutSandwichCode < Neo::Koan
   end
 
   def test_counting_lines2
-    assert_equal __, count_lines2("example_file.txt")
+    assert_equal 4, count_lines2(EXAMPLE_FILE)
   end
 
   # ------------------------------------------------------------------
 
   def find_line2(file_name)
     # Rewrite find_line using the file_sandwich library function.
+    file_sandwich(file_name) do |file|
+      while line = file.gets
+        return line if line =~ /e/
+      end
+    end
   end
 
   def test_finding_lines2
-    assert_equal __, find_line2("example_file.txt")
+    assert_equal "test\n", find_line2(EXAMPLE_FILE)
   end
 
   # ------------------------------------------------------------------
@@ -100,7 +107,7 @@ class AboutSandwichCode < Neo::Koan
   end
 
   def test_open_handles_the_file_sandwich_when_given_a_block
-    assert_equal __, count_lines3("example_file.txt")
+    assert_equal 4, count_lines3(EXAMPLE_FILE)
   end
 
 end
