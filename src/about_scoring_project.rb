@@ -31,6 +31,32 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 
 def score(dice)
   # You need to write this method
+  dice_counts = {}
+  dice.each do |die|
+    dice_counts = dice_counts.merge(die => 1) { |__, original, new| original + new }
+  end
+
+  score = 0
+  dice_counts.each_pair do |k, v|
+    pairs_of_three = v / 3
+    remaining_count = v % 3
+
+    # count our groups of three
+    score += if k == 1
+               pairs_of_three * 1000
+             else
+               pairs_of_three * (k * 100)
+             end
+
+    # add any extras
+    if k == 1
+      score += remaining_count * 100
+    elsif k == 5
+      score += remaining_count * 50
+    end
+  end
+
+  score
 end
 
 class AboutScoringProject < Neo::Koan
@@ -72,6 +98,7 @@ class AboutScoringProject < Neo::Koan
     assert_equal 1100, score([1,1,1,1])
     assert_equal 1200, score([1,1,1,1,1])
     assert_equal 1150, score([1,1,1,5,1])
+    assert_equal 2200, score([1,1,1,5,1,1,1,5,1])
   end
 
 end
