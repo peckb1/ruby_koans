@@ -1,6 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/neo')
 
+# Inheritance tests
 class AboutInheritance < Neo::Koan
+
+  # Mans best friend
   class Dog
     attr_reader :name
 
@@ -9,75 +12,85 @@ class AboutInheritance < Neo::Koan
     end
 
     def bark
-      "WOOF"
+      'WOOF'
     end
   end
 
+  # A smaller Dog
   class Chihuahua < Dog
     def wag
       :happy
     end
 
     def bark
-      "yip"
+      'yip'
     end
   end
 
   def test_subclasses_have_the_parent_as_an_ancestor
-    assert_equal __, Chihuahua.ancestors.include?(Dog)
+    assert_equal true, Chihuahua.ancestors.include?(Dog)
   end
 
   def test_all_classes_ultimately_inherit_from_object
-    assert_equal __, Chihuahua.ancestors.include?(Object)
+    assert_equal true, Chihuahua.ancestors.include?(Object)
   end
 
   def test_subclasses_inherit_behavior_from_parent_class
-    chico = Chihuahua.new("Chico")
-    assert_equal __, chico.name
+    chico = Chihuahua.new('Chico')
+    assert_equal 'Chico', chico.name
   end
 
   def test_subclasses_add_new_behavior
-    chico = Chihuahua.new("Chico")
-    assert_equal __, chico.wag
+    chico = Chihuahua.new('Chico')
+    assert_equal :happy, chico.wag
 
-    assert_raise(___) do
-      fido = Dog.new("Fido")
+    assert_raise(NoMethodError) do
+      fido = Dog.new('Fido')
       fido.wag
     end
   end
 
   def test_subclasses_can_modify_existing_behavior
-    chico = Chihuahua.new("Chico")
-    assert_equal __, chico.bark
+    chico = Chihuahua.new('Chico')
+    assert_equal 'yip', chico.bark
 
-    fido = Dog.new("Fido")
-    assert_equal __, fido.bark
+    fido = Dog.new('Fido')
+    assert_equal 'WOOF', fido.bark
   end
 
   # ------------------------------------------------------------------
 
+  # Not mean, just misunderstood
   class BullDog < Dog
     def bark
-      super + ", GROWL"
+      super + ', GROWL'
     end
   end
 
   def test_subclasses_can_invoke_parent_behavior_via_super
-    ralph = BullDog.new("Ralph")
-    assert_equal __, ralph.bark
+    ralph = BullDog.new('Ralph')
+    assert_equal 'WOOF, GROWL', ralph.bark
   end
 
   # ------------------------------------------------------------------
 
+  # A very big dog
   class GreatDane < Dog
     def growl
-      super.bark + ", GROWL"
+      super.bark + ', GROWL'
+    end
+
+    def other_growl
+      bark + ', GROWL'
     end
   end
 
   def test_super_does_not_work_cross_method
-    george = GreatDane.new("George")
-    assert_raise(___) do
+    george = GreatDane.new('George')
+
+    assert_equal 'WOOF, GROWL', george.other_growl
+
+    assert_raise(NoMethodError) do
       george.growl
     end
   end
